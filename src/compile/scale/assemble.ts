@@ -6,7 +6,7 @@ import {keys, stringValue} from '../../util';
 import {isDataRefDomain, isDataRefUnionedDomain, isFieldRefUnionDomain, isSignalRefDomain, isVgRangeStep, isVgSignalRef, VgDataRef, VgRange, VgScale} from '../../vega.schema';
 import {Model} from '../model';
 import {isRawSelectionDomain, selectionScaleDomain} from '../selection/selection';
-import {mergeDomains} from './domain';
+import {assembleDomain, mergeDomains} from './domain';
 
 export function assembleScaleForModelAndChildren(model: Model) {
   return model.children.reduce((scales, child) => {
@@ -38,24 +38,11 @@ export function assembleScalesForModel(model: Model): VgScale[] {
         domainRaw = selectionScaleDomain(model, domainRaw);
       }
 
-      const domains = scaleComponent.domains.map(domain => {
-        // Correct references to data as the original domain's data was determined
-        // in parseScale, which happens before parseData. Thus the original data
-        // reference can be incorrect.
-
-        if (isDataRefDomain(domain)) {
-          domain.data = model.lookupDataSource(domain.data);
-        }
-        return domain;
-      });
-
-      // domains is an array that has to be merged into a single vega domain
-      const domain = mergeDomains(domains);
 
       scales.push({
         name,
         type,
-        domain: domain,
+        domain: assembleDomain(model, channel),
         ...(domainRaw ? {domainRaw} : {}),
         range: range,
         ...otherScaleProps

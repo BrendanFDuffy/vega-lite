@@ -26,7 +26,7 @@ import {FacetModel} from '../facet';
 import {Model} from '../model';
 import {SELECTION_DOMAIN} from '../selection/selection';
 import {UnitModel} from '../unit';
-import {ScaleComponentIndex} from './component';
+import {ScaleComponentIndex, ScaleComponent} from './component';
 
 export function parseScaleDomain(model: Model) {
   if (model instanceof UnitModel) {
@@ -416,4 +416,21 @@ export function getFieldFromDomains(domains: VgNonUnionDomain[]): string {
     return domain.field;
   }
   return undefined;
+}
+
+export function assembleDomain(model: Model, channel: ScaleChannel) {
+  const scaleComponent = model.component.scales[channel];
+  const domains = scaleComponent.domains.map(domain => {
+    // Correct references to data as the original domain's data was determined
+    // in parseScale, which happens before parseData. Thus the original data
+    // reference can be incorrect.
+
+    if (isDataRefDomain(domain)) {
+      domain.data = model.lookupDataSource(domain.data);
+    }
+    return domain;
+  });
+
+  // domains is an array that has to be merged into a single vega domain
+  return mergeDomains(domains);
 }
