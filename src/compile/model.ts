@@ -29,7 +29,7 @@ import {parseMarkDef} from './mark/mark';
 import {RepeaterValue} from './repeat';
 import {assembleScalesForModel} from './scale/assemble';
 import {ScaleComponent, ScaleComponentIndex} from './scale/component';
-import {getFieldFromDomains} from './scale/domain';
+import {assembleDomain, getFieldFromDomain} from './scale/domain';
 import {parseScale} from './scale/parse';
 import {SelectionComponent} from './selection/selection';
 import {Split} from './split';
@@ -370,7 +370,8 @@ export abstract class Model {
 
         if (hasDiscreteDomain(type) && isVgRangeStep(range)) {
           const scaleName = scaleComponent.get('name');
-          const fieldName = getFieldFromDomains(scaleComponent.domains);
+          const domain = assembleDomain(this, channel);
+          const fieldName = getFieldFromDomain(domain);
           const fieldRef = field({aggregate: 'distinct', field: fieldName}, {expr: 'datum'});
           return {
             signal: sizeExpr(scaleName, scaleComponent, fieldRef)
