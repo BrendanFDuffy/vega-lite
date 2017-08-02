@@ -62,7 +62,6 @@ export function getHeaderType(orient: AxisOrient) {
 
 export function getTitleGroup(model: Model, channel: HeaderChannel) {
   const title = model.component.layoutHeaders[channel].title;
-  const align = channel === 'row' ? 'right' : 'center';
   const textOrient = channel === 'row' ? 'vertical' : undefined;
 
   return {
@@ -75,7 +74,7 @@ export function getTitleGroup(model: Model, channel: HeaderChannel) {
       encode: {
         update: {
           // TODO: add title align
-          align: {value: align},
+          align: {value: 'center'},
           text: {value: title},
           fill: {value: 'black'},
           fontWeight: {value: 'bold'},
