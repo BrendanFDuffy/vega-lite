@@ -149,17 +149,9 @@ export class FacetModel extends ModelWithField {
   private makeHeaderComponent(channel: HeaderChannel, labels: boolean): HeaderComponent {
     const sizeType = channel === 'row' ? 'height' : 'width';
 
-    let descendant = this.child;
-    // FIXME this is not always correct as we need a way
-    // to properly read inner layout's actual width/height
-    // in order to correctly center the plot.
-    while (descendant instanceof FacetModel) {
-      descendant = descendant.child;
-    }
-
     return {
       labels,
-      sizeSignal: descendant.getSizeSignalRef(sizeType),
+      sizeSignal: this.child.getSizeSignalRef(sizeType),
       axes: []
     };
   }
@@ -235,6 +227,7 @@ export class FacetModel extends ModelWithField {
 
     return {
       padding: {row: 10, column: 10},
+      headerBand: 0.5,
 
       // TODO: support offset for rowHeader/rowFooter/rowTitle/columnHeader/columnFooter/columnTitle
       offset: 10,

@@ -360,6 +360,12 @@ export abstract class Model {
   }
 
   public getSizeSignalRef(sizeType: 'width' | 'height'): VgSignalRef {
+    const layoutSize = this.component.layoutSize.get(sizeType);
+
+    if (!layoutSize) {
+      return undefined;
+    }
+
     if (this.parent instanceof FacetModel) {
       const channel = sizeType === 'width' ? 'x' : 'y';
       const scaleComponent = this.component.scales[channel];

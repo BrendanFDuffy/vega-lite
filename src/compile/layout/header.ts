@@ -129,11 +129,13 @@ export function getHeaderGroup(model: Model, channel: HeaderChannel, headerType:
           }
         } : {}),
         ...(title ? {title} : {}),
-        encode: {
-          update: {
-            [sizeChannel]: header.sizeSignal
+        ...(header.sizeSignal ? {
+          encode: {
+            update: {
+              [sizeChannel]: header.sizeSignal
+            }
           }
-        },
+        }: {}),
         ...(hasAxes ? {axes} : {})
       };
     }
